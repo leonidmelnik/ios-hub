@@ -61,25 +61,34 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)cellReusableIdentifier
 {
-    return self.nibName ?: NSStringFromClass(self.cellClass);
+    return self.nibName ?: [[NSStringFromClass(self.cellClass) componentsSeparatedByString:@"."] lastObject];
+}
+
+- (BOOL)isRegisteredForIdentifier:(NSString *)ident inTableView:(UITableView *)tableView
+{
+	NSDictionary *regiteredNibs = [tableView valueForKey:@"_nibMap"];
+	return regiteredNibs[ident] != nil;
 }
 
 - (id)cellForIndexPath:(NSIndexPath *)indexPath usingTableView:(UITableView *)tableView item:(CCTableViewItem *)item
 {
     NSString *identifier = [self cellIdentifierForIndexPath:indexPath withItem:item];
+	
+	if(![self isRegisteredForIdentifier:identifier inTableView:tableView])
+	{
+		if (self.cellClass && !self.nibName) {
+			[tableView registerClass:self.cellClass forCellReuseIdentifier:identifier];
+		}
 
-    if (self.cellClass && !self.nibName) {
-        [tableView registerClass:self.cellClass forCellReuseIdentifier:identifier];
-    }
-
-    if (self.nibName) {
-        NSCache *registeredNibs = [self nibsForTable:tableView];
-        if (![[registeredNibs objectForKey:identifier] isEqualToString:self.nibName]) {
-            UINib *nib = [UINib nibWithNibName:self.nibName bundle:[NSBundle mainBundle]];
-            [tableView registerNib:nib forCellReuseIdentifier:identifier];
-            [registeredNibs setObject:self.nibName forKey:identifier];
-        }
-    }
+		if (self.nibName) {
+			NSCache *registeredNibs = [self nibsForTable:tableView];
+			if (![[registeredNibs objectForKey:identifier] isEqualToString:self.nibName]) {
+				UINib *nib = [UINib nibWithNibName:self.nibName bundle:[NSBundle mainBundle]];
+				[tableView registerNib:nib forCellReuseIdentifier:identifier];
+				[registeredNibs setObject:self.nibName forKey:identifier];
+			}
+		}
+	}
     return [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
 }
 
