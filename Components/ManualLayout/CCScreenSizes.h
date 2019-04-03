@@ -43,9 +43,9 @@ static CGFloat const kCCScreenHeightIphone8 = kCCScreenHeightIphone6;
 static CGFloat const kCCScreenHeightIphone8Plus = kCCScreenHeightIphone6Plus;
 static CGFloat const kCCScreenHeightIphoneX = kCCScreenHeight58Inch;
 
-CGFloat CCScreenWidth();
-CGFloat CCScreenHeight();
-CGFloat CCScreenStatusBarHeight();
+CGFloat CCScreenWidth(void);
+CGFloat CCScreenHeight(void);
+CGFloat CCScreenStatusBarHeight(void);
 
 CGFloat CCScreenDependentValue(CGFloat valueFor35, CGFloat valueFor4, CGFloat valueFor47, CGFloat valueFor55);
 CGFloat CCScreenDependentValue6(CGFloat valueForPre6, CGFloat valueFor6AndPost);
